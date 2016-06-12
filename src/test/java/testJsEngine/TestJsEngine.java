@@ -19,6 +19,9 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
+import com.alibaba.fastjson.JSON;
+import com.ljx.model.UserModel;
+
 public class TestJsEngine {
 
 	private Logger logger = LogManager.getLogger(TestJsEngine.class);
@@ -162,8 +165,40 @@ public class TestJsEngine {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine jsEengine = manager.getEngineByExtension("js");
 		Reader reader = new InputStreamReader(
-				new FileInputStream("C:/stsWorkspace/testJsEngine/src/main/resources/myScript.js"));
+				new FileInputStream("C:/gitRepo/testScriptEngine/src/main/resources/myScript.js"));
 		jsEengine.eval(reader);
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void scriptExecutionReaderDemo2() throws FileNotFoundException, ScriptException, NoSuchMethodException {
+		ScriptEngineManager manager = new ScriptEngineManager();
+		ScriptEngine jsEengine = manager.getEngineByExtension("js");
+		Reader reader = new InputStreamReader(
+				new FileInputStream("C:/gitRepo/testScriptEngine/src/main/resources/myScript2.js"));
+		Object eval = jsEengine.eval(reader);
+		Invocable invocable = (Invocable)jsEengine;
+		invocable.invokeFunction("getName", "ljx");
+		
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void scriptExecutionReaderDemo3() throws FileNotFoundException, ScriptException, NoSuchMethodException {
+		ScriptEngineManager manager = new ScriptEngineManager();
+		ScriptEngine jsEengine = manager.getEngineByExtension("js");
+		Reader reader = new InputStreamReader(
+				new FileInputStream("C:/gitRepo/testScriptEngine/src/main/resources/myScript2.js"));
+		
+		UserModel userModel = new UserModel();
+		userModel.setUsername("ljx");
+		userModel.setPassword("123");
+		
+		String userJson = JSON.toJSONString(userModel);
+		Object eval = jsEengine.eval(reader);
+		Invocable invocable = (Invocable)jsEengine;
+		invocable.invokeFunction("getName", userJson);
+		
 	}
 
 	/**
@@ -193,7 +228,7 @@ public class TestJsEngine {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName("javascript");
 		try {
-			engine.put("name", "abcde");
+			engine.put("name", "abcde");// engine中存在var
 			engine.eval("var output = '';for (i = 0; i <= name.length; i++) {"
 					+ "  output = name.charAt(i)+'-' + output" + "}");
 			String name = (String) engine.get("output");
