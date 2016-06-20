@@ -7,3 +7,7 @@ function getName(userModel) {
 	System.out.println(obj.password)
 	
 }
+
+function feeFun() {
+	return "3.53";
+}

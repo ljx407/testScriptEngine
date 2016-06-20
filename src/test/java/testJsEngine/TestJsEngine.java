@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 import javax.script.Bindings;
@@ -125,6 +126,12 @@ public class TestJsEngine {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testBigDi() {
+		Double d = 1.0;
+		logger.info(new BigDecimal(d));
+	}
 
 	/**
 	 * JS中变量使用
@@ -195,9 +202,31 @@ public class TestJsEngine {
 		userModel.setPassword("123");
 		
 		String userJson = JSON.toJSONString(userModel);
+		logger.info(userJson);
 		Object eval = jsEengine.eval(reader);
 		Invocable invocable = (Invocable)jsEengine;
 		invocable.invokeFunction("getName", userJson);
+		
+	}
+	
+	@Test
+	@SuppressWarnings("unused")
+	public void scriptExecutionReaderDemo4() throws FileNotFoundException, ScriptException, NoSuchMethodException {
+		ScriptEngineManager manager = new ScriptEngineManager();
+		ScriptEngine jsEengine = manager.getEngineByExtension("js");
+		Reader reader = new InputStreamReader(
+				new FileInputStream("C:/gitRepo/testScriptEngine/src/main/resources/myScript2.js"));
+		
+		UserModel userModel = new UserModel();
+		userModel.setUsername("ljx");
+		userModel.setPassword("123");
+		
+		String userJson = JSON.toJSONString(userModel);
+		Object eval = jsEengine.eval(reader);
+		Invocable invocable = (Invocable)jsEengine;
+		String result = (String)invocable.invokeFunction("feeFun", userJson);
+		BigDecimal big = new BigDecimal(result);
+		logger.info("result:" + big);
 		
 	}
 
